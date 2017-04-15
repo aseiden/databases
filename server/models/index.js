@@ -16,11 +16,9 @@ module.exports = {
         connection = conn;
 
         return connection.query('select * from messages;');
-      }).then(function(messages) {
-        console.log('MESSAGES===================================>>>>>>>', messages);
       })
     }, // a function which produces all the messages
-    post: function () {
+    post: function (fullMessage) {
       var connection;
 
       mysqlP.createConnection({
@@ -29,30 +27,77 @@ module.exports = {
         database: 'chat'
       }).then(function(conn) {
         connection = conn;
-
-        return connection.query('SQL syntax here')
+        return connection.query(
+          `
+          INSERT INTO messages
+            (message, id_users, id_rooms)
+          SELECT "${fullMessage.message}",
+            u.id,
+              (SELECT r.id
+                FROM rooms r
+                WHERE r.name = "${fullMessage.roomname}")
+            FROM users u
+            WHERE u.name = "${fullMessage.username}"
+          `
+        // `INSERT INTO messages
+        // SET message = "${fullMessage.message}",
+        //   id_users = (
+        //     SELECT id
+        //     FROM users
+        //     WHERE name = "${fullMessage.username}"
+        //   ),
+        //   id_rooms = (
+        //     SELECT id
+        //     FROM rooms
+        //     WHERE name = "${fullMessage.roomname}"
+        //   )
+        // `
+        )
       })
     } // a function which can be used to insert a message into the database
   },
 
   users: {
     // Ditto as above.
-    get: function () {},
+    get: function () {
+      //
+
+    },
     post: function (user) {
       var connection;
 
-      mysqlP.createConnection({
+      return mysqlP.createConnection({
         user: 'root',
         password: '',
         database: 'chat'
       }).then(function(conn) {
         connection = conn;
 
-        return connection.query('INSERT IGNORE INTO `users`SET `name` = ?;', user);
+        return connection.query('INSERT IGNORE INTO `users` SET `name` = ?;', user);
+      })
+    }
+  },
+
+  rooms: {
+    // Ditto as above.
+    get: function () {
+      //
+
+    },
+    post: function (room) {
+      var connection;
+
+      return mysqlP.createConnection({
+        user: 'root',
+        password: '',
+        database: 'chat'
+      }).then(function(conn) {
+        connection = conn;
+
+        return connection.query('INSERT IGNORE INTO `rooms` SET `name` = ?;', room);
       }).then(function(data) {
-        console.log('THIS IS THE DATA FROM THE USER POST METHOD, WHO KNOWS WHAT WE NEED TO DO, WE DONT', data);
+        console.log('THIS IS THE DATA FROM THE room POST METHOD, WHO KNOWS WHAT WE NEED TO DO, WE DONT', data);
       })
     }
   }
 };
-
