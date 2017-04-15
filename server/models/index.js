@@ -20,6 +20,7 @@ module.exports = {
     }, // a function which produces all the messages
     post: function (fullMessage) {
       var connection;
+      console.log()
 
       mysqlP.createConnection({
         user: 'root',
@@ -39,20 +40,9 @@ module.exports = {
             FROM users u
             WHERE u.name = "${fullMessage.username}"
           `
-        // `INSERT INTO messages
-        // SET message = "${fullMessage.message}",
-        //   id_users = (
-        //     SELECT id
-        //     FROM users
-        //     WHERE name = "${fullMessage.username}"
-        //   ),
-        //   id_rooms = (
-        //     SELECT id
-        //     FROM rooms
-        //     WHERE name = "${fullMessage.roomname}"
-        //   )
-        // `
-        )
+        ).then(function(data) {
+          console.log('DATADATATATATATATAT: ', data);
+        })
       })
     } // a function which can be used to insert a message into the database
   },
@@ -95,8 +85,6 @@ module.exports = {
         connection = conn;
 
         return connection.query('INSERT IGNORE INTO `rooms` SET `name` = ?;', room);
-      }).then(function(data) {
-        console.log('THIS IS THE DATA FROM THE room POST METHOD, WHO KNOWS WHAT WE NEED TO DO, WE DONT', data);
       })
     }
   }
