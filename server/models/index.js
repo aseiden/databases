@@ -8,14 +8,19 @@ module.exports = {
     get: function () {
       var connection;
 
-      mysqlP.createConnection({
+      return mysqlP.createConnection({
         user: 'root',
         password: '',
         database: 'chat'
       }).then(function(conn) {
         connection = conn;
 
-        return connection.query('select * from messages;');
+        return connection.query(`
+          SELECT messages.message, rooms.name as roomname, users.name as username
+          FROM messages, users, rooms
+          WHERE messages.id_users = users.id and
+          messages.id_rooms = rooms.id;
+        `);
       })
     }, // a function which produces all the messages
     post: function (fullMessage) {

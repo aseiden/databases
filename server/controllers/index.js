@@ -5,8 +5,16 @@ var Promise = require("bluebird");
 module.exports = {
   messages: {
     get: function (req, res) {
-      var messages = models.messages.get();
-      res.end();
+      //retrieve messages from database
+
+      //populate body of response w/ messages
+      //send response
+      models.messages.get().then(function(data) { //object
+        res.status(200).send(data);
+        // for (var key in data[0]) {
+        //   console.log('THIS IS THE MESSAGE GET DATA:', key, data[0][key]);
+        // }
+      })
     }, // a function which handles a get request for all messages
     post: function (req, res) {
       models.users.post(req.body.username).then(function() {

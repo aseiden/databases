@@ -66,9 +66,19 @@ describe('Persistent Node Chat Server', function() {
     });
   });
 
-  xit('Should output all messages from the DB', function(done) {
+  it('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-       var queryString = "SELECT * FROM messages;";
+       var queryString = `
+       INSERT INTO messages
+         (message, id_users, id_rooms)
+       SELECT "Men like you can never change!",
+         u.id,
+           (SELECT r.id
+             FROM rooms r
+             WHERE r.name = "Hello")
+         FROM users u
+         WHERE u.name = "Valjean"
+       `;
        var queryArgs = [];
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
