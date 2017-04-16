@@ -9,12 +9,9 @@ class Chatterbox {
 
   init () {
     var thisObj = this;
-    console.log(thisObj);
-    console.log(this);
     this.fetch(function(data) {
-      console.log(data)
-      console.log('hello')
       // Initialize app to lobby messages
+      console.log('THIS IS THE DATA FROM THE INIT FETCH', data);
       thisObj.renderRooms(data, 'lobby');
       thisObj.renderMessages(data, 'lobby');
 
@@ -81,14 +78,25 @@ class Chatterbox {
 
   send (message) {
     var thisObj = this;
-    $.post(this.server, JSON.stringify(message), function(data) {
-      thisObj.getNewMessages(message.roomname);
+    console.log(message);
+    $.ajax({
+      type: "POST",
+      url: thisObj.server,
+      data: JSON.stringify(message),
+      success: function(data) {
+        thisObj.getNewMessages(message.roomname);
+      },
+      contentType: 'application/json'
     });
+    // $.post(this.server, message, function(data) {
+    //   console.log('I WAS SUCCESSFUL');
+    //   thisObj.getNewMessages(message.roomname);
+    // }, 'json');
   }
 
   fetch (successCallback, urlCode = '') {
     var thisObj = this;
-    $.get(this.server + this.SEARCH_PARAMS, successCallback);
+    $.get(this.server, successCallback);
   }
 
   getNewMessages (room) {
@@ -105,7 +113,7 @@ class Chatterbox {
   renderMessages (response, room) {
     var thisObj = this;
 
-    var filteredMessages = response.results.filter(function(message) {
+    var filteredMessages = response.filter(function(message) {
       if (message.roomname === room) {
         return true;
       } else {
@@ -144,7 +152,7 @@ class Chatterbox {
     $('#roomSelect').children().remove();
     var thisObj = this;
 
-    var responseRooms = _.uniq(response.results.map(function(message) {
+    var responseRooms = _.uniq(response.map(function(message) {
       return message.roomname;
     }));
 

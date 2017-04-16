@@ -17,6 +17,7 @@ module.exports = {
       })
     }, // a function which handles a get request for all messages
     post: function (req, res) {
+      console.log('THIS BE DA BODY WE ARE LOOKING FOR', req.body, typeof req.body);
       models.users.post(req.body.username).then(function() {
         return models.rooms.post(req.body.roomname);
       }).then(function() {
